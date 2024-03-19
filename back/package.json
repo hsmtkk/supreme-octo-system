@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "default": "npm run build && npm run deploy",
+        "build": "sam build",
+        "deploy": "sam deploy"
+    }
+}
