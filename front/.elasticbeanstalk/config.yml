@@ -1,9 +1,9 @@
 branch-defaults:
-  main:
-    environment: supreme-octo-system-dev
+  default:
+    environment: supreme-octo-system-front-dev3
     group_suffix: null
 global:
-  application_name: supreme-octo-system
+  application_name: supreme-octo-system-front
   branch: null
   default_ec2_keyname: aws
   default_platform: Python 3.11 running on 64bit Amazon Linux 2023
@@ -14,5 +14,5 @@ global:
   platform_version: null
   profile: null
   repository: null
-  sc: git
+  sc: null
   workspace_type: Application
