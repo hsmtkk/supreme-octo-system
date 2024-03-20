@@ -1,7 +1,7 @@
 {
     "scripts": {
         "default": "npm run build && npm run deploy",
-        "build": "sam build",
-        "deploy": "sam deploy"
+        "build": "sam build --cached",
+        "deploy": "sam deploy --no-confirm-changeset"
     }
 }

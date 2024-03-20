@@ -10,13 +10,18 @@ Resources:
     Properties:
       Architectures:
       - x86_64
-      PackageType: Image
+      Environment:
+        Variables:
+          VECTOR_BUCKET: !Ref VectorBucket
       Events:
         Chat:
           Type: Api
           Properties:
             Path: /chat
             Method: post
+      PackageType: Image
+      Policies:
+      - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
 
   UploadFunction:
     Type: AWS::Serverless::Function
@@ -26,13 +31,21 @@ Resources:
     Properties:
       Architectures:
       - x86_64
-      PackageType: Image
+      Environment:
+        Variables:
+          VECTOR_BUCKET: !Ref VectorBucket
       Events:
         Chat:
           Type: Api
           Properties:
             Path: /upload
             Method: post
+      PackageType: Image
+      Policies:
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+  VectorBucket:
+    Type: AWS::S3::Bucket
 
 Outputs:
   ChatURL:
