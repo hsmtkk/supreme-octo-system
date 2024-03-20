@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "streamlit": "pipenv run streamlit run main.py",
+        "deploy": "eb deploy",
+        "requirements": "pipenv requirements > requirements.txt"
+    }
+}
