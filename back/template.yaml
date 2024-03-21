@@ -2,6 +2,61 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
+  SourceBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+        - ExpirationInDays: 7
+          Status: Enabled
+
+  VectorBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+        - ExpirationInDays: 7
+          Status: Enabled
+
+  UploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: upload/
+      Environment:
+        Variables:
+          SOURCE_BUCKET: !Ref SourceBucket
+      Events:
+        Upload:
+          Type: Api
+          Properties:
+            Path: /upload
+            Method: post
+      Handler: app.lambda_handler
+      Runtime: python3.11
+
+  VectorFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./vector
+    Properties:
+      Architectures:
+      - x86_64
+      Environment:
+        Variables:
+          VECTOR_BUCKET: !Ref VectorBucket
+      Events:
+        S3:
+          Type: S3
+          Properties:
+            Bucket: !Ref SourceBucket
+            Events: s3:ObjectCreated:*
+      PackageType: Image
+      Policies:
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
   ChatFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -23,95 +78,8 @@ Resources:
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
 
-  UploadFunction:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Dockerfile: Dockerfile
-      DockerContext: ./upload
-    Properties:
-      Architectures:
-      - x86_64
-      Environment:
-        Variables:
-          VECTOR_BUCKET: !Ref VectorBucket
-      Events:
-        Chat:
-          Type: Api
-          Properties:
-            Path: /upload
-            Method: post
-      PackageType: Image
-      Policies:
-      - arn:aws:iam::aws:policy/AmazonS3FullAccess
-
-  VectorBucket:
-    Type: AWS::S3::Bucket
-
 Outputs:
-  ChatURL:
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/chat/"
   UploadURL:
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/upload/"
-
-#   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-#   # Find out more about other implicit resources you can reference within SAM
-#   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-#   HelloWorldApi:
-#     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-
-
-#   HelloWorldFunction:
-#     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-#     Properties:
-#       PackageType: Image
-#       Architectures:
-#         - x86_64
-#       Events:
-#         HelloWorld:
-#           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#           Properties:
-#             Path: /hello
-#             Method: get
-#     Metadata:
-#       Dockerfile: Dockerfile
-#       DockerContext: ./hello_world
-#       DockerTag: python3.11-v1
-
-
-# # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-# Globals:
-#   Function:
-#     Timeout: 3
-
-# Resources:
-#   HelloWorldFunction:
-#     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-#     Properties:
-#       PackageType: Image
-#       Architectures:
-#         - x86_64
-#       Events:
-#         HelloWorld:
-#           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#           Properties:
-#             Path: /hello
-#             Method: get
-#     Metadata:
-#       Dockerfile: Dockerfile
-#       DockerContext: ./hello_world
-#       DockerTag: python3.11-v1
-
-# Outputs:
-#   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-#   # Find out more about other implicit resources you can reference within SAM
-#   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-#   HelloWorldApi:
-#     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-#   HelloWorldFunction:
-#     Description: "Hello World Lambda Function ARN"
-#     Value: !GetAtt HelloWorldFunction.Arn
-#   HelloWorldFunctionIamRole:
-#     Description: "Implicit IAM Role created for Hello World function"
-#     Value: !GetAtt HelloWorldFunctionRole.Arn
+  ChatURL:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/chat/"
