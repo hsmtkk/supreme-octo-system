@@ -3,5 +3,7 @@ langchain-community
 langchain-openai
 langchain-text-splitters
 pdf2image
+pdfminer.six
+pillow-heif
 requests
 unstructured

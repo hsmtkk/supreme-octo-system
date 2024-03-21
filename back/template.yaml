@@ -34,7 +34,10 @@ Resources:
             Path: /upload
             Method: post
       Handler: app.lambda_handler
+      Policies:
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Runtime: python3.11
+      Timeout: 16
 
   VectorFunction:
     Type: AWS::Serverless::Function
@@ -56,6 +59,7 @@ Resources:
       PackageType: Image
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Timeout: 16
 
   ChatFunction:
     Type: AWS::Serverless::Function
@@ -77,6 +81,7 @@ Resources:
       PackageType: Image
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      Timeout: 16
 
 Outputs:
   UploadURL:

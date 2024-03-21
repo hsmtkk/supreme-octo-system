@@ -1,4 +1,3 @@
-import base64
 import json
 import os
 import tempfile
@@ -10,6 +9,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.documents.base import Document
 
+s3_client = boto3.client("s3")
 vector_bucket = os.environ["VECTOR_BUCKET"]
 
 
@@ -17,14 +17,21 @@ def lambda_handler(event, context) -> dict:
     print(f"{event=}")
     print(f"{context=}")
 
-    doc_bytes_encoded = event["body"]
-    doc_bytes = base64.b64decode(doc_bytes_encoded)
+    for record in event["Records"]:
+        s3 = record["s3"]
+        bucket = s3["bucket"]["name"]
+        key = s3["object"]["key"]
+        handle_object(bucket, key)
 
+    return {"statusCode": 200, "body": json.dumps({"message": "ok"})}
+
+
+def handle_object(bucket: str, key: str) -> None:
+    resp = s3_client.get_object(Bucket=bucket, Key=key)
+    doc_bytes = resp["Body"].read()
     raw_docs = load_document(doc_bytes)
     docs = split_documents(raw_docs)
     save_vector(docs)
-
-    return {"statusCode": 200, "body": json.dumps({"message": "ok"})}
 
 
 def load_document(doc_bytes: bytes) -> list[Document]:

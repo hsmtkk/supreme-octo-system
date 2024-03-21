@@ -7,20 +7,17 @@ import boto3
 source_bucket = os.environ["SOURCE_BUCKET"]
 
 def lambda_handler(event, context) -> dict:
-    print(f"{event=}")
-    print(f"{context=}")
-
-    doc_bytes_encoded = event["body"]
+    uploaded = json.loads(event["body"])
+    file_name = uploaded["name"]
+    doc_bytes_encoded = uploaded["encoded"]
     doc_bytes = base64.b64decode(doc_bytes_encoded)
 
-    with tempfile.NamedTemporaryFile(delete_on_close=False) as temp_file:
-        temp_file.write(doc_bytes)
-        temp_file.close()
-        upload_object(source_bucket, "doc.pdf", temp_file.name)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        file_path = os.path.join(tmp_dir, file_name)
+        with open(file_path, "wb") as f:
+            f.write(doc_bytes)
+        with open(file_path, "rb") as f:
+            client = boto3.client("s3")
+            client.put_object(Bucket=source_bucket, Body=f, Key=file_name)
 
     return {"statusCode": 200, "body": json.dumps({"message": "ok"})}
-
-def upload_object(bucket: str, key: str, local_path: str) -> None:
-    client = boto3.client("s3")
-    with open(local_path, "rb") as f:
-        client.put_object(Bucket=bucket, body=f, Key=key)
