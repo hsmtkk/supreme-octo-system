@@ -16,11 +16,12 @@ def get_secrets() -> dict[str, str]:
     client = boto3.client("secretsmanager")
     resp = client.get_secret_value(SecretId=secret_arn)
     secret_str = resp["SecretString"]
-    print(f"{secret_str=}")
-    return {"OPENAI_API_KEY": "placeholder"}
+    secrets = json.loads(secret_str)
+    return secrets
 
 
 secrets = get_secrets()
+os.environ["OPENAI_API_KEY"] = secrets["OPENAI_API_KEY"]
 
 tmp_dir = tempfile.mkdtemp()
 

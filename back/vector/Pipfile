@@ -4,18 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+boto3 = "*"
 langchain = "*"
 langchain-community = "*"
 langchain-openai = "*"
 langchain-text-splitters = "*"
-boto3 = "*"
-unstructured = "*"
-pdf2image = "*"
-"pdfminer.six" = "*"
-pillow-heif = "*"
-opencv-python = "*"
+pypdf = "*"
+chromadb = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.10"

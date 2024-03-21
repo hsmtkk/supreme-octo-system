@@ -3,7 +3,7 @@ import os
 import tempfile
 import boto3
 
-from langchain_community.document_loaders.pdf import UnstructuredPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
@@ -11,6 +11,19 @@ from langchain_core.documents.base import Document
 
 s3_client = boto3.client("s3")
 vector_bucket = os.environ["VECTOR_BUCKET"]
+secret_arn = os.environ["SECRET_ARN"]
+
+
+def get_secrets() -> dict[str, str]:
+    client = boto3.client("secretsmanager")
+    resp = client.get_secret_value(SecretId=secret_arn)
+    secret_str = resp["SecretString"]
+    secrets = json.loads(secret_str)
+    return secrets
+
+
+secrets = get_secrets()
+os.environ["OPENAI_API_KEY"] = secrets["OPENAI_API_KEY"]
 
 
 def lambda_handler(event, context) -> dict:
@@ -29,17 +42,17 @@ def lambda_handler(event, context) -> dict:
 def handle_object(bucket: str, key: str) -> None:
     resp = s3_client.get_object(Bucket=bucket, Key=key)
     doc_bytes = resp["Body"].read()
-    raw_docs = load_document(doc_bytes)
+    raw_docs = load_document(key, doc_bytes)
     docs = split_documents(raw_docs)
     save_vector(docs)
 
 
-def load_document(doc_bytes: bytes) -> list[Document]:
-    with tempfile.NamedTemporaryFile() as temp_file:
-        temp_file.write(doc_bytes)
-        temp_file.close()
-
-        loader = UnstructuredPDFLoader(temp_file.name)
+def load_document(key: str, doc_bytes: bytes) -> list[Document]:
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        file_path = os.path.join(tmp_dir, key)
+        with open(file_path, "wb") as f:
+            f.write(doc_bytes)
+        loader = PyPDFLoader(file_path)
         raw_docs = loader.load()
         return raw_docs
 

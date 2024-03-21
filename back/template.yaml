@@ -54,6 +54,7 @@ Resources:
       - x86_64
       Environment:
         Variables:
+          SECRET_ARN: !Ref Secret
           VECTOR_BUCKET: !Ref VectorBucket
       Events:
         S3:
@@ -65,6 +66,7 @@ Resources:
       PackageType: Image
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/SecretsManagerReadWrite
       Timeout: 32
 
   ChatFunction:

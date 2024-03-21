@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "requirements": "pipenv requirements > requirements.txt"
+    }
+}

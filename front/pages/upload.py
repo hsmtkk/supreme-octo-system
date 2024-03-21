@@ -9,7 +9,7 @@ uploaded_file = st.file_uploader("Choose a file")
 
 if uploaded_file is not None:
     bytes_data = uploaded_file.getvalue()
-    encoded = str(base64.b64encode(bytes_data))
+    encoded = base64.b64encode(bytes_data).decode()
     data = {
         "name": uploaded_file.name,
         "encoded": encoded,
