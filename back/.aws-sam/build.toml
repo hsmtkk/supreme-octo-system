@@ -10,19 +10,19 @@ manifest_hash = "d41d8cd98f00b204e9800998ecf8427e"
 packagetype = "Zip"
 functions = ["UploadFunction"]
 
-[function_build_definitions.58c4f2db-58e9-42eb-8f3f-64223a778268]
+[function_build_definitions.6baa84b5-d2ab-4d1e-a2ce-7901934eae45]
 packagetype = "Image"
 functions = ["VectorFunction"]
 
-[function_build_definitions.58c4f2db-58e9-42eb-8f3f-64223a778268.metadata]
+[function_build_definitions.6baa84b5-d2ab-4d1e-a2ce-7901934eae45.metadata]
 Dockerfile = "Dockerfile"
 DockerContext = "C:\\Users\\hsmtk\\repo\\supreme-octo-system\\back\\vector"
 
-[function_build_definitions.964dd8a1-7fda-4521-b993-57744412474a]
+[function_build_definitions.02987199-e56d-4ad2-8d2d-5d80e6a7cd01]
 packagetype = "Image"
 functions = ["ChatFunction"]
 
-[function_build_definitions.964dd8a1-7fda-4521-b993-57744412474a.metadata]
+[function_build_definitions.02987199-e56d-4ad2-8d2d-5d80e6a7cd01.metadata]
 Dockerfile = "Dockerfile"
 DockerContext = "C:\\Users\\hsmtk\\repo\\supreme-octo-system\\back\\chat"
 

@@ -4,6 +4,9 @@ COPY requirements.txt ./
 
 RUN python3.11 -m pip install -r requirements.txt -t .
 
+# required to use opencv-python module
+RUN yum -y install mesa-libGL
+
 COPY app.py ./
 
 # Command can be overwritten by providing a different command in the template directly.
