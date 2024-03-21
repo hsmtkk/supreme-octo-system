@@ -12,6 +12,8 @@ boto3 = "*"
 unstructured = "*"
 pdf2image = "*"
 "pdfminer.six" = "*"
+pillow-heif = "*"
+opencv-python = "*"
 
 [dev-packages]
 

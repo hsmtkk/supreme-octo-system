@@ -88,6 +88,7 @@ Resources:
       PackageType: Image
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      - arn:aws:iam::aws:policy/SecretsManagerReadWrite
       Timeout: 16
 
 Outputs:
