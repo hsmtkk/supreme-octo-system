@@ -58,5 +58,4 @@ def lambda_handler(event, context) -> dict:
     question = decoded["question"]
     answer = qa_client.invoke(question)
     print(f"{answer=}")
-
-    return {"statusCode": 200, "body": json.dumps(answer)}
+    return {"statusCode": 200, "body": answer["result"]}

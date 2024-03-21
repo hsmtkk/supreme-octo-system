@@ -1,11 +1,11 @@
-FROM public.ecr.aws/lambda/python:3.11
+FROM public.ecr.aws/lambda/python:3.12
 
 COPY requirements.txt ./
 
-RUN python3.11 -m pip install -r requirements.txt -t .
+# chroma requires C++ compiler
+RUN dnf install g++ -y
 
-# required to use opencv-python module
-RUN yum -y install mesa-libGL
+RUN python3.12 -m pip install -r requirements.txt -t .
 
 COPY app.py ./
 

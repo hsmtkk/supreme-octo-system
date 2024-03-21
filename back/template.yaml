@@ -41,7 +41,7 @@ Resources:
       Handler: app.lambda_handler
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3FullAccess
-      Runtime: python3.11
+      Runtime: python3.12
       Timeout: 16
 
   VectorFunction:
@@ -67,7 +67,7 @@ Resources:
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3FullAccess
       - arn:aws:iam::aws:policy/SecretsManagerReadWrite
-      Timeout: 32
+      Timeout: 64
 
   ChatFunction:
     Type: AWS::Serverless::Function
@@ -87,11 +87,12 @@ Resources:
           Properties:
             Path: /chat
             Method: post
+      MemorySize: 256
       PackageType: Image
       Policies:
       - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
       - arn:aws:iam::aws:policy/SecretsManagerReadWrite
-      Timeout: 16
+      Timeout: 64
 
 Outputs:
   UploadURL:

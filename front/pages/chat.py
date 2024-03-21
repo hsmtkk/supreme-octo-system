@@ -14,4 +14,4 @@ if submit_clicked:
     }
     answer = requests.post(chat_api, json=data)
     st.write(answer)
-    st.json(answer)
+    st.write(answer.text)

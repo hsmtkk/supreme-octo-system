@@ -72,7 +72,7 @@ def save_vector(docs: list[Document]) -> None:
     embeddings = OpenAIEmbeddings()
     with tempfile.TemporaryDirectory() as temp_dir:
         chroma = Chroma.from_documents(
-            documents=docs, embedding=embeddings, persist_directory="vector"
+            documents=docs, embedding=embeddings, persist_directory=temp_dir
         )
         result = chroma.similarity_search("Abstract or summary")
         print(f"{result=}")
@@ -84,4 +84,4 @@ def save_vector(docs: list[Document]) -> None:
 def upload_object(bucket: str, key: str, local_path: str) -> None:
     client = boto3.client("s3")
     with open(local_path, "rb") as f:
-        client.put_object(Bucket=bucket, body=f, Key=key)
+        client.put_object(Bucket=bucket, Body=f, Key=key)
